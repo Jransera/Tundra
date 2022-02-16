@@ -1,5 +1,12 @@
 <resources>
     <string name="app_name">Tundra</string>
-    <string name="edit_message">Enter a message</string>
-    <string name="button_send">Send</string>
+    <string name="edit_message">Enter a time</string>
+    <string name="button_send">Start</string>
+    <string name="welcome_message">Welcome to Tundra</string>
+    <string name="icon_label_1">settings</string>
+    <string name="icon_label_2">rankings</string>
+    <string name="icon_label_3">study</string>
+    <color  name="light_green">#e2f0ab</color>
+    <color  name="off_white">#fff2cc</color>
+
 </resources>

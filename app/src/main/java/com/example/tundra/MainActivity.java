@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         //case handling
         if(proximitySensor == null){
             Toast.makeText(this, "no Prox Sensor",Toast.LENGTH_SHORT).show();
+            //if no sensor it will close app
             //finish();
         }
         else{
