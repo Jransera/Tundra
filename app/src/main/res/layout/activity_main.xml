@@ -31,7 +31,7 @@
             android:layout_toStartOf="@+id/button"
             android:ems="10"
             android:hint="@string/edit_message"
-            android:inputType="textPersonName"
+            android:inputType="time"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
