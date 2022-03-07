@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -17,10 +19,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     //all the shit we may need
@@ -28,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     TextView sensorStatusTV;
     SensorManager sensorManager;
     Sensor proximitySensor;
+
+
+
 
     @Override
     public <T extends View> T findViewById(int id) {
@@ -62,10 +71,11 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav =findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(navlistener);
 
-        //set first fragment;
-        //getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new StudyFragment()).commit();
+
+
     }
 
+    //sensor handling and other shit
     SensorEventListener proximitySensorEventListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -79,12 +89,15 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+
+        //idk what this does i forget lol
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
 
         }
     };
 
+    //just reusing this for the creation of the alarm system
     public void sendMessages(View view){
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);

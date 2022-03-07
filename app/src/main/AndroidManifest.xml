@@ -3,6 +3,7 @@
     package="com.example.tundra" >
 
     <uses-permission android:name="android.hardware.sensor.proximity" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
