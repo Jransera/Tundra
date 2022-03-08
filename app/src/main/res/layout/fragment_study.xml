@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="855dp"
-        android:background="@color/off_white"
+        android:background="@color/dark_blue"
         android:gravity="center"
         android:text="Study"
         android:textAlignment="center"

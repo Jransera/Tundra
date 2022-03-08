@@ -9,9 +9,9 @@
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
-        android:layout_width="489dp"
-        android:layout_height="964dp"
-        android:background="@color/light_green"
+        android:layout_width="476dp"
+        android:layout_height="1038dp"
+        android:background="@color/dark_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
