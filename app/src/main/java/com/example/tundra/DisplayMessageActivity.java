@@ -5,8 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +26,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class DisplayMessageActivity extends AppCompatActivity {
@@ -130,6 +136,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
+                    alarm();
                     reset();
                 }
             }.start();
@@ -174,5 +181,41 @@ public class DisplayMessageActivity extends AppCompatActivity {
         if(counterIsActive){
             countDownTimer.cancel();
         }
+    }
+
+    private void alarm()
+    {
+        Toast.makeText(this, "Alarm! Wake up! Wake up!", Toast.LENGTH_LONG).show();
+
+        // we will use vibrator first
+        Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(this.VIBRATOR_SERVICE);
+        vibrator.vibrate(4000);
+
+
+        Uri alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alarmUri == null) {
+            alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        }
+
+        // setting default ringtone
+        Ringtone ringtone = RingtoneManager.getRingtone(this, alarmUri);
+
+        long ringDelay = 35000;
+
+        // play ringtone
+        ringtone.play();
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                ringtone.stop();
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task,ringDelay);
+
+
+
+
     }
 }
