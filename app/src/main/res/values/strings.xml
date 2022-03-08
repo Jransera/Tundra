@@ -7,8 +7,7 @@
     <string name="icon_label_1">Settings</string>
     <string name="icon_label_2">Rankings</string>
     <string name="icon_label_3">Study</string>
-    <color name="light_green">#e2f0ab</color>
-    <color name="off_white">#fff2cc</color>
+
     <string name="title_activity_settings">settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

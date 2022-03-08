@@ -19,27 +19,10 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".MainActivity">
 
-        <EditText
-            android:id="@+id/editTextTextPersonName"
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="45dp"
-            android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@+id/button"
-            android:ems="10"
-            android:hint="@string/edit_message"
-            android:inputType="time"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
         <Button
             android:id="@+id/button"
-            android:layout_width="104dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/editTextTextPersonName"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="16dp"
