@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.service.autofill.UserData;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,12 +50,16 @@ public class DisplayMessageActivity extends AppCompatActivity {
     Button start_btn;
     CountDownTimer countDownTimer;
     Boolean counterIsActive = false;
+    userData u_data;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_message);
+
+        Intent i = getIntent();
+        u_data = (userData)i.getSerializableExtra("userInfo");
 
         timer_sb = findViewById(R.id.timer_sb);
         timer_tv = findViewById(R.id.timer_tv);
@@ -77,58 +83,9 @@ public class DisplayMessageActivity extends AppCompatActivity {
             }
         });
 
-        //get intent
 
-        //set alarm variables
-//        alarmTimePicker = (TimePicker) findViewById(R.id.time_setter);
-//        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
     }
-
-//    public void OnToggleClicked(View view)
-//    {
-//        long time;
-//        //initialize when button is pressed // this we can maybe set to the proximity sensor?
-//        if(((ToggleButton) view).isChecked())
-//        {
-//            Toast.makeText(DisplayMessageActivity.this,"ALARM ON",Toast.LENGTH_SHORT).show();
-//            Calendar calendar = Calendar.getInstance();
-//
-//            //get time information from picker
-//            calendar.set(Calendar.HOUR_OF_DAY,alarmTimePicker.getCurrentHour());
-//            calendar.set(Calendar.MINUTE,alarmTimePicker.getCurrentMinute());
-//
-//            //set new intent for the alarm reciever
-//            Intent intent = new Intent(this, AlarmReceiver.class);
-//
-//
-//            pendingIntent = PendingIntent.getBroadcast(this,0,intent,0);
-//            Toast.makeText(DisplayMessageActivity.this,"intent made", Toast.LENGTH_SHORT).show();
-//
-//            //time
-//            time = (calendar.getTimeInMillis() - (calendar.getTimeInMillis() % 60000));
-//
-//            if (System.currentTimeMillis() > time)
-//            {
-//                //setting time  as am or pm
-//                if(calendar.AM_PM == 0)
-//                    time = time + (1000*60 *60 *12);
-//                else
-//                    time = time + (1000 *60 *60 *24);
-//
-//            }
-//            String temp = String.valueOf(time);
-//            Toast.makeText(DisplayMessageActivity.this,temp, Toast.LENGTH_SHORT).show();
-//            //repeat until toggle is hit
-//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, time,pendingIntent);
-//
-//        }
-//        else
-//        {
-//            alarmManager.cancel(pendingIntent);
-//            Toast.makeText(DisplayMessageActivity.this,"ALARM OFF", Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     private void writeToFile(String data, Context context)
     {
@@ -143,43 +100,39 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
     }
 
-    private String readFromFile(Context context) {
+    private userData updateData(userData data,long time,int tag){
 
-        String ret = "";
-
-        try {
-            InputStream inputStream = context.openFileInput("data.txt");
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append("\n").append(receiveString);
-                }
-
-                inputStream.close();
-                ret = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
+        //update on success
+        if(tag == 1) {
+            data.setTotalTime(data.getTotalTime() + time);
+            data.setNumSessions(data.getNumSessions() + 1);
+            data.setAvg(data.getTotalTime() / data.getNumSessions());
+            data.setLatest(time);
+            data.setNumTries(data.getNumTries() + 1);
+            data.setSuccRate(data.getNumSessions() / data.getNumTries());
         }
 
-        return ret;
+        else if(tag == 0)
+        {
+            data.setNumTries(data.getNumTries() + 1);
+            data.setSuccRate(data.getNumSessions() / data.getNumTries());
+
+        }
+
+        return data;
     }
 
 
+
     public void start_timer(View view) {
+        long time = timer_sb.getProgress() * 1000;
         if(counterIsActive == false){
             counterIsActive = true;
             timer_sb.setEnabled(false);
             start_btn.setText("STOP");
-            countDownTimer = new CountDownTimer(timer_sb.getProgress() * 1000, 1000) {
+            //long time = timer_sb.getProgress() * 1000;
+
+            countDownTimer = new CountDownTimer(time, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     update((int) millisUntilFinished / 1000);
@@ -187,13 +140,35 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
                 @Override
                 public void onFinish() {
+                    long previous;
+                    //get total time and add them to eachother
+                    previous = u_data.getTotalTime();
+                    //Log.d("MyActivity","init:"+u_data.toString());
+                    u_data = updateData(u_data,time,1);
+                    Log.d("MyActivity","update:"+u_data.toString());
                     alarm();
                     reset();
+
+                    //this should be put into an onclick for a new button;
+                    Intent intent = new Intent();
+                    intent.putExtra("user_info",u_data);
+                    setResult(1,intent);
+                    DisplayMessageActivity.super.onBackPressed();
+
                 }
             }.start();
         }else{
+            u_data = updateData(u_data,time,0);
             reset();
+
+            //put into a button to close the studying page
+            Intent intent = new Intent();
+            intent.putExtra("user_info",u_data);
+            setResult(1,intent);
+            DisplayMessageActivity.super.onBackPressed();
         }
+
+
     }
     private void reset() {
         timer_tv.setText("0:240");

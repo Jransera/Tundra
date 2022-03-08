@@ -1,9 +1,15 @@
 package com.example.tundra;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -14,6 +20,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +33,11 @@ import android.widget.ToggleButton;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,8 +46,24 @@ public class MainActivity extends AppCompatActivity {
     TextView sensorStatusTV;
     SensorManager sensorManager;
     Sensor proximitySensor;
+    userData u_data = null;
+    ActivityResultLauncher<Intent> someActivityResultLauncher=
+            registerForActivityResult( new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if(result.getResultCode() == 1) {
+                Intent data = result.getData();
+                if(data != null){
+                    u_data =(userData)data.getSerializableExtra("user_info");
+                    Log.d("MyActivity","returned"+u_data.toString());
+                }
+
+            }
 
 
+        }
+    });
 
 
     @Override
@@ -46,6 +74,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        //create the activity handler so that we can pass through data
+
+
+        //read in csv and set user data as soon as app opens
+        if(u_data == null) {
+            u_data = readCsv();
+            Log.d("MyActivity","init"+u_data.toString());
+
+        }
 
         //prox sensor handling
         super.onCreate(savedInstanceState);
@@ -75,6 +112,54 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //read a CSV line by line currently only reads the data csv
+    //create a userdata object that holds neccessary data
+    private userData readCsv(){
+        InputStream is = getResources().openRawResource(R.raw.data);
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(is, Charset.forName("UTF-8"))
+        );
+
+        String line ="";
+        userData sample = null;
+        try {
+            //step over headers
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                //split line
+                String[] tokens = line.split(",");
+
+                //create a new sample,
+                sample = new userData();
+
+                //set all of the setters from the file.
+                //probably should be done at the start of the app?
+
+                sample.setRank(Integer.parseInt(tokens[0]));
+                sample.setTotalTime(Long.parseLong(tokens[1]));
+                sample.setAvg((Long.parseLong(tokens[2])));
+                sample.setLatest((Long.parseLong(tokens[3])));
+                sample.setSuccRate(Float.parseFloat(tokens[4]));
+                sample.setNumSessions(Integer.parseInt(tokens[5]));
+                sample.setNumTries(Integer.parseInt(tokens[6]));
+
+
+                //Toast.makeText(DisplayMessageActivity.this,"created", Toast.LENGTH_SHORT).show();
+
+                //Log.d("MyActivity","just created:"+sample.toString());
+
+
+            }
+        } catch (IOException e){
+            Log.wtf("MyActivity","error reading data file on line" +line, e);
+            e.printStackTrace();
+
+        }
+        return sample;
+    }
+
+
     //sensor handling and other shit
     SensorEventListener proximitySensorEventListener = new SensorEventListener() {
         @Override
@@ -97,11 +182,16 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //just reusing this for the creation of the alarm system
+    //send the new activity,
     public void sendMessages(View view){
+
+        //recreate the user data so we can pass information to change
+        //userData u_data = readCsv();
         Intent intent = new Intent(this, DisplayMessageActivity.class);
-        startActivity(intent);
+        intent.putExtra("userInfo",u_data);
+        someActivityResultLauncher.launch(intent);
     }
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener navlistener = new BottomNavigationView.OnNavigationItemSelectedListener(){
 
