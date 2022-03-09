@@ -79,4 +79,14 @@ public class userData implements Serializable {
                 ", numTries=" + numTries +
                 '}';
     }
+
+    public String publish(){
+        return (Rank + "," + totalTime +
+                "," + avg +
+                "," + latest +
+                "," + succRate +
+                "," + numSessions +
+                "," + numTries);
+
+    }
 }

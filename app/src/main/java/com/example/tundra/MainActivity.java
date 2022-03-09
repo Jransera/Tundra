@@ -34,9 +34,12 @@ import android.widget.ToggleButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 
@@ -57,6 +60,11 @@ public class MainActivity extends AppCompatActivity {
                 if(data != null){
                     u_data =(userData)data.getSerializableExtra("user_info");
                     Log.d("MyActivity","returned"+u_data.toString());
+
+                    //should update the csv
+                    writeCsv(u_data);
+                    //reread the csv to double check lol
+                    u_data = readCsv();
                 }
 
             }
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         return super.findViewById(id);
     }
 
+    //initialization of app when first run
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -157,6 +166,24 @@ public class MainActivity extends AppCompatActivity {
 
         }
         return sample;
+    }
+
+    //write to csv, should be done on close i think, or after an update?
+    public void writeCsv(userData data)
+    {
+        String filename = "data.csv";
+        String path = "src/main/res/raw/";
+        String headers = "Rank,Total_Time,Avg_Time,Latest_Time,Succ_Rate,N_Sessions,N_Tries";
+        String info = data.publish();
+
+        try{
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(filename,this.MODE_PRIVATE));
+            outputStreamWriter.write(headers+'\n'+info);
+            outputStreamWriter.close();
+        }
+        catch(IOException e){
+            Log.e("Myactivity","File write failed:"+e.toString());
+        }
     }
 
 
