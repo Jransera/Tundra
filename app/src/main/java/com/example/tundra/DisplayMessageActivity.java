@@ -6,6 +6,10 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -34,17 +38,15 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 
 public class DisplayMessageActivity extends AppCompatActivity {
-    //timer variables
-//    TimePicker alarmTimePicker;
-//    PendingIntent pendingIntent;
-//    AlarmManager alarmManager;
 
+    //timing shit
     SeekBar timer_sb;
     TextView timer_tv;
     Button start_btn;
@@ -52,20 +54,31 @@ public class DisplayMessageActivity extends AppCompatActivity {
     Boolean counterIsActive = false;
     userData u_data;
 
+    //gyro stuff
+    SensorManager sensorManager;
+    Sensor gyroSensor;
+    boolean gyroPresent;
+    TextView face;
 
+
+    //called when activity first started
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_message);
 
+        //get user info
         Intent i = getIntent();
         u_data = (userData)i.getSerializableExtra("userInfo");
 
+        //timing initialization and connection to IO
         timer_sb = findViewById(R.id.timer_sb);
         timer_tv = findViewById(R.id.timer_tv);
         start_btn = findViewById(R.id.start_btn);
         timer_sb.setMax(14400); // 4 hours
         timer_sb.setProgress(1550); // 25 minutes
+
+        //create the changebar listener reads progress
         timer_sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -83,10 +96,24 @@ public class DisplayMessageActivity extends AppCompatActivity {
             }
         });
 
+        //accelerometer initialization
+        face = (TextView)findViewById(R.id.face);
 
-
+        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
+        if(sensorList.size() > 0){
+            gyroPresent = true;
+            gyroSensor = sensorList.get(0);
+        }
+        else{
+            gyroPresent = false;
+            face.setText("No accelerometer Present!");
+        }
     }
 
+
+
+    //write to the user data file,
     private void writeToFile(String data, Context context)
     {
         try{
@@ -100,6 +127,10 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
     }
 
+    //update the userdata after the timer goes off
+    //has second check to ensure tagging is correct
+    //1 == successful study session
+    //0 == stopped midway and failed session
     private userData updateData(userData data,long time,int tag){
 
         //update on success
@@ -125,7 +156,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
 
 
-
+//Start the timer
     public void start_timer(View view) {
         long time = timer_sb.getProgress() * 1000;
         if(counterIsActive == false){
@@ -160,6 +191,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 }
             }.start();
         }else{
+            //update the user data after a failure
             u_data = updateData(u_data,time,0);
             reset();
 
@@ -171,6 +203,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
 
 
+     //reset the timer and the changebar;
     }
     private void reset() {
         timer_tv.setText("0:240");
@@ -211,6 +244,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
     }
 
+    //the alarm system we use to notify the user
     private void alarm()
     {
         Toast.makeText(this, "Alarm! Wake up! Wake up!", Toast.LENGTH_LONG).show();
@@ -242,8 +276,42 @@ public class DisplayMessageActivity extends AppCompatActivity {
         Timer timer = new Timer();
         timer.schedule(task,ringDelay);
 
-
-
-
     }
+
+
+    //gyro functions
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if(gyroPresent){
+            sensorManager.registerListener(gyroListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if(gyroPresent){
+            sensorManager.unregisterListener(gyroListener);
+        }
+    }
+
+    private SensorEventListener gyroListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+         float y_value = sensorEvent.values[1];
+         if(y_value ==0){
+             face.setText("Still");
+         }
+         else{
+             face.setText("Rotating");
+         }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    };
+
 }

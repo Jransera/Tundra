@@ -300,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
                 //create a temporary rank;
                 rank<Integer,Long> temp = new rank(Integer.parseInt(tokens[0]),Long.parseLong(tokens[1]));
 
-
                 //add to list
                 rank_info.add(temp);
             }
