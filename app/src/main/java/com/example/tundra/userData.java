@@ -10,6 +10,15 @@ public class userData implements Serializable {
     private float succRate;
     private int numSessions;
     private int numTries;
+    private int ID;
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
 
     public int getRank() {
         return Rank;
@@ -77,6 +86,7 @@ public class userData implements Serializable {
                 ", succRate=" + succRate +
                 ", numSessions=" + numSessions +
                 ", numTries=" + numTries +
+                ", ID=" +ID+
                 '}';
     }
 
@@ -86,7 +96,8 @@ public class userData implements Serializable {
                 "," + latest +
                 "," + succRate +
                 "," + numSessions +
-                "," + numTries);
+                "," + numTries +
+                "," + ID);
 
     }
 }

@@ -109,18 +109,20 @@ public class DisplayMessageActivity extends AppCompatActivity {
             data.setAvg(data.getTotalTime() / data.getNumSessions());
             data.setLatest(time);
             data.setNumTries(data.getNumTries() + 1);
-            data.setSuccRate(data.getNumSessions() / data.getNumTries());
+            data.setSuccRate((float)data.getNumSessions() / (float)data.getNumTries());
         }
 
         else if(tag == 0)
         {
             data.setNumTries(data.getNumTries() + 1);
-            data.setSuccRate(data.getNumSessions() / data.getNumTries());
+            data.setSuccRate((float)data.getNumSessions() / (float)data.getNumTries());
 
         }
 
         return data;
     }
+
+
 
 
 
