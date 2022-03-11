@@ -60,6 +60,17 @@ public class DisplayMessageActivity extends AppCompatActivity {
     boolean gyroPresent;
     TextView face;
 
+    //magnetometer values
+    Sensor magSensor;
+    boolean magPresent;
+
+    boolean rotating = false;
+    boolean moved;
+
+    View view;
+
+
+
 
     //called when activity first started
     @Override
@@ -76,7 +87,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         timer_tv = findViewById(R.id.timer_tv);
         start_btn = findViewById(R.id.start_btn);
         timer_sb.setMax(14400); // 4 hours
-        timer_sb.setProgress(1550); // 25 minutes
+        timer_sb.setProgress(1500); // 25 minutes
 
         //create the changebar listener reads progress
         timer_sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -96,18 +107,20 @@ public class DisplayMessageActivity extends AppCompatActivity {
             }
         });
 
-        //accelerometer initialization
+        //gyro initialization
         face = (TextView)findViewById(R.id.face);
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
+
+        List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if(sensorList.size() > 0){
             gyroPresent = true;
             gyroSensor = sensorList.get(0);
+            Log.d("MyActivity","the sensor was there");
         }
         else{
             gyroPresent = false;
-            face.setText("No accelerometer Present!");
+            face.setText("No accell Present!");
         }
     }
 
@@ -153,13 +166,22 @@ public class DisplayMessageActivity extends AppCompatActivity {
         return data;
     }
 
-
+    public void start(View newView){
+        face.setText("flip phone to begin");
+        if(gyroPresent) {
+            sensorManager.registerListener(gyroListener, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        view =newView;
+    }
 
 
 //Start the timer
-    public void start_timer(View view) {
+    public void start_timer(View view){
+
+        Log.d("MyActivity","started timer");
+
         long time = timer_sb.getProgress() * 1000;
-        if(counterIsActive == false){
+        if(counterIsActive == false) {
             counterIsActive = true;
             timer_sb.setEnabled(false);
             start_btn.setText("STOP");
@@ -169,37 +191,70 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     update((int) millisUntilFinished / 1000);
+
+                    if(moved){
+                        //update the user data after a failure
+                        alarm();
+                        u_data = updateData(u_data,time,0);
+                        reset();
+
+                        //reset the variables
+                        rotating = false;
+                        moved = false;
+
+                        //put into a button to close the studying page
+                        Intent intent = new Intent();
+                        intent.putExtra("user_info",u_data);
+                        setResult(1,intent);
+                        DisplayMessageActivity.super.onBackPressed();
+                    }
+//
                 }
 
                 @Override
                 public void onFinish() {
                     long previous;
                     //get total time and add them to eachother
+
                     previous = u_data.getTotalTime();
                     //Log.d("MyActivity","init:"+u_data.toString());
-                    u_data = updateData(u_data,time,1);
-                    Log.d("MyActivity","update:"+u_data.toString());
+                    u_data = updateData(u_data, time, 1);
+                    Log.d("MyActivity", "update:" + u_data.toString());
                     alarm();
                     reset();
 
+                    //reset the variables
+                    rotating = false;
+                    moved = false;
+
+
                     //this should be put into an onclick for a new button;
                     Intent intent = new Intent();
-                    intent.putExtra("user_info",u_data);
-                    setResult(1,intent);
+                    intent.putExtra("user_info", u_data);
+                    setResult(1, intent);
                     DisplayMessageActivity.super.onBackPressed();
 
                 }
             }.start();
-        }else{
-            //update the user data after a failure
-            u_data = updateData(u_data,time,0);
-            reset();
 
-            //put into a button to close the studying page
-            Intent intent = new Intent();
-            intent.putExtra("user_info",u_data);
-            setResult(1,intent);
-            DisplayMessageActivity.super.onBackPressed();
+        }else{
+            if(moved){
+                //update the user data after a failure
+                alarm();
+                u_data = updateData(u_data,time,0);
+                reset();
+
+                //reset the variables
+                rotating = false;
+                moved = false;
+
+                //put into a button to close the studying page
+                Intent intent = new Intent();
+                intent.putExtra("user_info",u_data);
+                setResult(1,intent);
+                DisplayMessageActivity.super.onBackPressed();
+            }
+
         }
 
 
@@ -283,9 +338,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        if(gyroPresent){
-            sensorManager.registerListener(gyroListener,gyroSensor,SensorManager.SENSOR_DELAY_NORMAL);
-        }
+
     }
 
     @Override
@@ -296,16 +349,62 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
     }
 
+    //state handling for rotational value
+    //0 = intial
+    //1 = rotating
+    //2 = facedown
+    //3 = facedown but moved
+    int state = 0;
+
     private SensorEventListener gyroListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
-         float y_value = sensorEvent.values[1];
-         if(y_value ==0){
-             face.setText("Still");
-         }
-         else{
-             face.setText("Rotating");
-         }
+            Log.d("MyActivity","in listener");
+
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float z_value = sensorEvent.values[2];
+                float x_value = sensorEvent.values[0];
+                float y_value = sensorEvent.values[1];
+
+                Log.d("MyActivity","z" + z_value + "x"+x_value + "y" + y_value);
+
+                if(state == 1  && z_value <= -9.8f){
+                    Log.d("MyActiviy","facedown");
+                    state = 2;
+                }
+
+                if(state ==2) {
+                    if ((x_value > .2f && x_value < -2f) || (y_value > .2f && y_value < -.2f) || z_value > -9.8) {
+
+                        state = 3;
+
+                        alarm();
+                        //testing
+                        //rotating = false;
+                        moved = true;
+                        Log.d("MyActivity", "moved");
+                    }
+                }
+
+                if (z_value >= 0) {
+                    //face.setText("faceup");
+                    Log.d("MyActivity","faceup");
+                } else {
+
+                    if (!rotating) {
+
+
+                        rotating = true;
+                        state = 1;
+
+                        face.setText("upsidedown");
+                        Log.d("MyActivity", "rotating");
+
+                    }
+                }
+
+            }
+
         }
 
         @Override
@@ -313,5 +412,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
         }
     };
+
+
 
 }

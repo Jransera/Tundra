@@ -37,6 +37,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +74,11 @@ public class MainActivity extends AppCompatActivity {
                     //should update the csv
                     writeCsv(u_data);
                     //reread the csv to double check lol
-                    u_data = readCsv();
+                    try {
+                        u_data = readCsv();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     Log.d("MyActivity","rewritten "+u_data.toString());
                     rankUpdate(u_data);
                 }
@@ -99,7 +104,14 @@ public class MainActivity extends AppCompatActivity {
 
         //read in csv and set user data as soon as app opens
         if(u_data == null) {
-            u_data = readCsv();
+            try {
+                u_data = readCsv();
+                if(u_data == null){
+                    Log.d("MyActivity","null after readCSV");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Log.d("MyActivity","init "+u_data.toString());
 
         }
@@ -139,11 +151,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setDataFile(){
+        String filename = "/data/data/com.example.tundra/files/data.csv";
+        // String path = "src/main/res/raw/";
+        String headers = "Rank,Total_Time,Avg_Time,Latest_Time,Succ_Rate,N_Sessions,N_Tries";
+        String info = "0,0,0,0,0,0,0";
+
+        try{
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(filename));
+            outputStreamWriter.write(headers+'\n'+info);
+            outputStreamWriter.close();
+            Log.d("MyActvity","set data file");
+        }
+        catch(IOException e){
+            Log.e("Myactivity","RESET:File write failed:"+e.toString());
+        }
+    }
+
     //read a CSV line by line currently only reads the data csv
     //create a userdata object that holds neccessary data
-    private userData readCsv(){
+    private userData readCsv() throws IOException {
         InputStream is = null;
-        File f = new File(this.getFilesDir(),"data.csv");
+        File f = new File("/data/data/com.example.tundra/files","data.csv");
+        Log.d("MyActivity",f.getPath());
+
+        if(f.exists()){
+            Log.d("MyActvity","file existed");
+        }
+
+        if(!f.exists()){
+            boolean newFile = f.createNewFile();
+
+            if(newFile){
+                setDataFile();
+            }
+
+            Log.d("MyActvity","finished making new file");
+        }
 
         //open the data file as a inputstream
         try{
@@ -160,12 +204,29 @@ public class MainActivity extends AppCompatActivity {
         String line ="";
         userData sample = null;
         try {
+
+
+
+            if((line = reader.readLine()) == null){
+                Log.d("MyActvity","file was empty");
+                reader.close();
+                setDataFile();
+                readCsv();
+            }
+
             //step over headers
-            reader.readLine();
+//            line = reader.readLine();
+//            Log.d("MyActivity","lines:" + line);
 
             while ((line = reader.readLine()) != null) {
+
+                Log.d("MyActivity","lines:" + line);
+
                 //split line
                 String[] tokens = line.split(",");
+
+
+
 
                 //create a new sample,
                 sample = new userData();
@@ -273,13 +334,13 @@ public class MainActivity extends AppCompatActivity {
         List<rank<Integer,Long>> rank_info = new ArrayList<rank<Integer,Long>>(); //an array so we can resort user data if needed
 
         InputStream is = null;
-        File f = new File(this.getFilesDir(),"ranking.csv");
+        File f = new File("/data/data/com.example.tundra/files","ranking.csv");
 
         //open the data file as a inputstream
         try{
             is = new FileInputStream(f);
         }catch(IOException e){
-            Log.e("MyActivity","error opening data file");
+            Log.e("MyActivity","error opening Rank file");
         }
 
         //create a buffered reader so we can read line by line
