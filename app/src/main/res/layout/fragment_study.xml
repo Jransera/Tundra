@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context=".StudyFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -12,7 +12,6 @@
         android:layout_height="855dp"
         android:background="@color/dark_blue"
         android:gravity="center"
-        android:text="Study"
         android:textAlignment="center"
         android:textSize="30sp"
         android:textStyle="bold"
@@ -20,5 +19,59 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/rank_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Rank: 1"
+        android:textSize="48sp" />
+
+    <TextView
+        android:id="@+id/total_time_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="100dp"
+        android:text="Total time: 02 d 22 m 07 s"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/average_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="200dp"
+        android:text="Average session: 50 min"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/latest_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="300dp"
+        android:text="Last session: 57 min"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/succ_rate_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="400dp"
+        android:text="Success rate: 94%"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/num_sessions_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="500dp"
+        android:text="Total number of sessions: 38"
+        android:textSize="34sp" />
+
+    <TextView
+        android:id="@+id/num_tries_tv"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="1600dp"
+        android:text="Total number of tries: 40" />
 
 </FrameLayout>
