@@ -7,10 +7,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 public class RankListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
+    private List<rank<Integer,Long>> rankings;
 
-    public RankListAdapter() {
-
+    public RankListAdapter(List<rank<Integer,Long>> lst) {
+        this.rankings = lst;
     }
 
     @Override
@@ -28,11 +31,12 @@ public class RankListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        holder.getView().setText("place holder");
+        rank<Integer,Long> curr = rankings.get(position);
+        holder.getView().setText("Rank " + curr.getL() + ": " + curr.getR());
     }
 
     @Override
     public int getItemCount() {
-        return 100;
+        return rankings.size();
     }
 }
