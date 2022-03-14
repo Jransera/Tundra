@@ -34,7 +34,7 @@
 
 
     <RelativeLayout
-        android:id="@+id/container"
+        android:id="@+id/start_container"
         android:layout_width="481dp"
         android:layout_height="692dp"
         android:layout_marginTop="12dp"
@@ -47,7 +47,7 @@
 
         <!--Text view to display sensor status-->
         <Button
-            android:id="@+id/button"
+            android:id="@+id/init_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

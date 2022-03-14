@@ -18,6 +18,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.icu.util.BuddhistCalendar;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -25,7 +26,9 @@ import android.util.Pair;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -117,10 +120,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //read rankings on start this is for testing but It could be useful for the other pages
-       // if(rankings == null){
-         //   rankings = readRank();
-           // Log.d("MyActivity","init: " + rankings);
-       // }
+        if(rankings == null){
+            rankings = readRank();
+            Log.d("MyActivity","init: " + rankings);
+        }
 
 
         //prox sensor handling
@@ -476,23 +479,57 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            //hide the button?
+            Button rl = findViewById(R.id.init_button);
+
+
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("user_info",u_data);
+
             Fragment selectedFragment = null;
+
+            ArrayList<rank<Integer,Long>> al = new ArrayList<>(rankings.size());
+            al.addAll(rankings);
+
             switch(item.getItemId()) {
                 case R.id.study:
                     selectedFragment = new StudyFragment();
+                    if(rl.getVisibility() != View.GONE)
+                    {
+                        rl.setVisibility(View.GONE);
+                    }
+
                     break;
                 case R.id.settings:
                     selectedFragment = new SettingsFragment();
+                    if(rl.getVisibility() != View.GONE)
+                    {
+                        rl.setVisibility(View.GONE);
+                    }
                     break;
                 case R.id.rankings:
                     selectedFragment = new RankingsFragment();
+                    if(rl.getVisibility() != View.GONE)
+                    {
+                        rl.setVisibility(View.GONE);
+                    }
+
                     break;
                 case R.id.home:
                     for(int i = 0; i<getSupportFragmentManager().getBackStackEntryCount(); ++i){
                         getSupportFragmentManager().popBackStack();
+                        if(rl.getVisibility() != View.VISIBLE)
+                        {
+                            rl.setVisibility(View.VISIBLE);
+                        }
                     }
                     return true;
             }
+
+            bundle.putSerializable("rankings",al);
+
+            selectedFragment.setArguments(bundle);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container,selectedFragment).addToBackStack("Fragment")

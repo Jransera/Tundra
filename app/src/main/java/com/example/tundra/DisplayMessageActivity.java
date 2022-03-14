@@ -68,6 +68,8 @@ public class DisplayMessageActivity extends AppCompatActivity {
     boolean moved;
 
     View view;
+    int state = 0;
+    long time;
 
 
 
@@ -117,11 +119,16 @@ public class DisplayMessageActivity extends AppCompatActivity {
             gyroPresent = true;
             gyroSensor = sensorList.get(0);
             Log.d("MyActivity","the sensor was there");
+
+            face.setText("Set the Timer and press Start!");
+            face.setTextSize(32f);
         }
         else{
             gyroPresent = false;
             face.setText("No accell Present!");
         }
+
+
     }
 
 
@@ -166,12 +173,23 @@ public class DisplayMessageActivity extends AppCompatActivity {
         return data;
     }
 
+    //go back
+    public void goBack(View view){
+        //this should be put into an onclick for a new button;
+        Intent intent = new Intent();
+        intent.putExtra("user_info", u_data);
+        setResult(1, intent);
+        DisplayMessageActivity.super.onBackPressed();
+    }
+
+
     public void start(View newView){
-        face.setText("flip phone to begin");
+        face.setText("Flip phone face down to begin!");
         if(gyroPresent) {
             sensorManager.registerListener(gyroListener, gyroSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         view =newView;
+        state = 0;
     }
 
 
@@ -180,7 +198,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
         Log.d("MyActivity","started timer");
 
-        long time = timer_sb.getProgress() * 1000;
+        time = timer_sb.getProgress() * 1000;
         if(counterIsActive == false) {
             counterIsActive = true;
             timer_sb.setEnabled(false);
@@ -192,23 +210,6 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 public void onTick(long millisUntilFinished) {
                     update((int) millisUntilFinished / 1000);
 
-                    if(moved){
-                        //update the user data after a failure
-                        alarm();
-                        u_data = updateData(u_data,time,0);
-                        reset();
-
-                        //reset the variables
-                        rotating = false;
-                        moved = false;
-
-                        //put into a button to close the studying page
-                        Intent intent = new Intent();
-                        intent.putExtra("user_info",u_data);
-                        setResult(1,intent);
-                        DisplayMessageActivity.super.onBackPressed();
-                    }
-//
                 }
 
                 @Override
@@ -216,50 +217,39 @@ public class DisplayMessageActivity extends AppCompatActivity {
                     long previous;
                     //get total time and add them to eachother
 
+                    if(gyroPresent){
+                        sensorManager.unregisterListener(gyroListener);
+                    }
+
                     previous = u_data.getTotalTime();
                     //Log.d("MyActivity","init:"+u_data.toString());
                     u_data = updateData(u_data, time, 1);
                     Log.d("MyActivity", "update:" + u_data.toString());
                     alarm();
                     reset();
+                    state = 0;
 
                     //reset the variables
-                    rotating = false;
-                    moved = false;
 
 
-                    //this should be put into an onclick for a new button;
-                    Intent intent = new Intent();
-                    intent.putExtra("user_info", u_data);
-                    setResult(1, intent);
-                    DisplayMessageActivity.super.onBackPressed();
+
+
 
                 }
             }.start();
 
         }else{
-            if(moved){
-                //update the user data after a failure
-                alarm();
-                u_data = updateData(u_data,time,0);
-                reset();
 
-                //reset the variables
-                rotating = false;
-                moved = false;
-
-                //put into a button to close the studying page
-                Intent intent = new Intent();
-                intent.putExtra("user_info",u_data);
-                setResult(1,intent);
-                DisplayMessageActivity.super.onBackPressed();
-            }
 
         }
 
 
      //reset the timer and the changebar;
     }
+
+
+
+
     private void reset() {
         timer_tv.setText("0:240");
         timer_sb.setProgress(1500);
@@ -281,6 +271,27 @@ public class DisplayMessageActivity extends AppCompatActivity {
         }
         timer_sb.setProgress(progress);
         timer_tv.setText("" + minutes + ":" + secondsFinal);
+
+        if(state == 3){
+            //update the user data after a failure
+            reset();
+            alarm();
+            u_data = updateData(u_data,time,0);
+
+
+            //reset the variables
+            rotating = false;
+            moved = false;
+
+            if(gyroPresent){
+                sensorManager.unregisterListener(gyroListener);
+            }
+
+
+
+        }
+
+
     }
 
     @Override
@@ -297,12 +308,48 @@ public class DisplayMessageActivity extends AppCompatActivity {
         if(counterIsActive){
             countDownTimer.cancel();
         }
+
+
+
+
+    }
+
+    private String create_text(){
+        String text ="";
+        int max = 2;
+        int min = 0;
+
+        int val = (int) Math.floor(Math.random()*(max-min+1)+min);
+
+        switch (val){
+            case 0:
+                text = "Hey We Said No Phones During Studying";
+                break;
+            case 1:
+                text = "Woah There, Don't Get Distracted";
+                break;
+            case 2:
+                text = "Tik Tok Can Wait Just A Bit Longer";
+                break;
+        }
+
+        text += "! Try Again!";
+
+        return text;
     }
 
     //the alarm system we use to notify the user
     private void alarm()
     {
-        Toast.makeText(this, "Alarm! Wake up! Wake up!", Toast.LENGTH_LONG).show();
+
+        if(state == 3) {
+            face.setText(create_text());
+        }else{
+            face.setText("GOOD JOB! Go Again?");
+        }
+
+
+
 
         // we will use vibrator first
         Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(this.VIBRATOR_SERVICE);
@@ -354,7 +401,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
     //1 = rotating
     //2 = facedown
     //3 = facedown but moved
-    int state = 0;
+
 
     private SensorEventListener gyroListener = new SensorEventListener() {
         @Override
@@ -371,14 +418,14 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 if(state == 1  && z_value <= -9.8f){
                     Log.d("MyActiviy","facedown");
                     state = 2;
+                    start_timer(view);
+
                 }
 
                 if(state ==2) {
                     if ((x_value > .2f && x_value < -2f) || (y_value > .2f && y_value < -.2f) || z_value > -9.8) {
 
                         state = 3;
-
-                        alarm();
                         //testing
                         //rotating = false;
                         moved = true;
@@ -389,6 +436,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                 if (z_value >= 0) {
                     //face.setText("faceup");
                     Log.d("MyActivity","faceup");
+                    state = 0;
                 } else {
 
                     if (!rotating) {

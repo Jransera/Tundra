@@ -21,23 +21,20 @@
         app:layout_constraintVertical_bias="0.0">
 
         <TextView
-            android:layout_width="401dp"
-            android:layout_height="137dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="26dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/button_send" />
-
-        <TextView
             android:id="@+id/face"
-            android:layout_width="325dp"
-            android:layout_height="453dp"
+            android:layout_width="427dp"
+            android:layout_height="114dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="277dp"
-            android:layout_marginEnd="-4dp"
-            android:text="@string/button_send" />
+            android:layout_marginStart="37dp"
+            android:layout_marginTop="212dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/button_send"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/white"
+            android:textSize="48sp" />
 
         <SeekBar
             android:id="@+id/timer_sb"
@@ -66,6 +63,17 @@
             android:layout_marginTop="5dp"
             android:onClick="start"
             android:text="Start" />
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="197dp"
+            android:layout_marginTop="798dp"
+            android:onClick="goBack"
+            android:text="Back" />
 
     </RelativeLayout>
 
