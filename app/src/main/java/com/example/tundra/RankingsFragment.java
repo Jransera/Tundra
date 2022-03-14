@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.InputStream;
+import java.util.List;
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -20,6 +21,7 @@ import java.io.InputStream;
 public class RankingsFragment extends Fragment {
     private RecyclerView recyclerView;
     userData u_data;
+    List<rank<Integer,Long>> rankings;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
