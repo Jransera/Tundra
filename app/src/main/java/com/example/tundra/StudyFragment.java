@@ -111,14 +111,14 @@ public class StudyFragment extends Fragment {
         Log.d("MyActivty","rank");
 
 
-        total.setText(Long.toString(u_data.getTotalTime()));
+        total.setText(msToString(u_data.getTotalTime()));
 
         Log.d("MyActivty","total");
 
-        avg.setText(Long.toString(u_data.getAvg()));
+        avg.setText(msToString(u_data.getAvg()));
         Log.d("MyActivty","avg");
 
-        latest.setText(Long.toString(u_data.getLatest()));
+        latest.setText(msToString(u_data.getLatest()));
 
         Log.d("MyActivty","latest");
 
@@ -133,5 +133,12 @@ public class StudyFragment extends Fragment {
 
 
         return fl;
+    }
+
+    private String msToString(Long ms) {
+        Long days = ms/86400000;
+        Long hours = ms/3600000 - days * 24;
+        Long minutes = ms/60000 - days * 1440 - hours * 60;
+        return days + "Days " + hours + "Hours " + minutes + "Minutes";
     }
 }
