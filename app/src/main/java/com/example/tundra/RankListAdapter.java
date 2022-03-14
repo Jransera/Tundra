@@ -32,7 +32,11 @@ public class RankListAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         rank<Integer,Long> curr = rankings.get(position);
-        holder.getView().setText("Rank " + curr.getL() + ": " + curr.getR());
+        Long ms = curr.getR();
+        Long days = ms/86400000;
+        Long hours = ms/3600000 - days * 24;
+        Long minutes = ms/60000 - days * 1440 - hours * 60;
+        holder.getView().setText("Rank " + curr.getL() + ": " + days + "Days " + hours + "Hours " + minutes + "Minutes");
     }
 
     @Override
