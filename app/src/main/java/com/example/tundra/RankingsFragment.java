@@ -76,7 +76,7 @@ public class RankingsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new RandomNumListAdapter(1234));
+        recyclerView.setAdapter(new RankListAdapter(rankings));
 
         return view;
     }
