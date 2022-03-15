@@ -83,7 +83,11 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     Log.d("MyActivity","rewritten "+u_data.toString());
-                    rankUpdate(u_data);
+                    try {
+                        rankUpdate(u_data);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -113,16 +117,23 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("MyActivity","null after readCSV");
                 }
             } catch (IOException e) {
+                Log.d("MyActivity","fail to read user data");
                 e.printStackTrace();
+
             }
-            Log.d("MyActivity","init "+u_data.toString());
+           //Log.d("MyActivity","init "+u_data.toString());
 
         }
 
         //read rankings on start this is for testing but It could be useful for the other pages
         if(rankings == null){
-            rankings = readRank();
+            try {
+                rankings = readRank();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Log.d("MyActivity","init: " + rankings);
+            Log.d("MyActivity","ranking size" + rankings.size());
         }
 
 
@@ -171,6 +182,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setRankFile(){
+        String filename = "/data/data/com.example.tundra/files/ranking.csv";
+        // String path = "src/main/res/raw/";
+        String headers = "ID,Total_Time";
+        String info = "1,122340812039581235\n" +
+                "2,2145802351\n" +
+                "0,0";
+
+        try{
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(filename));
+            outputStreamWriter.write(headers+'\n'+info);
+            outputStreamWriter.close();
+            Log.d("MyActvity","set data file");
+        }
+        catch(IOException e){
+            Log.e("Myactivity","RESET:File write failed:"+e.toString());
+        }
+    }
+
     //read a CSV line by line currently only reads the data csv
     //create a userdata object that holds neccessary data
     private userData readCsv() throws IOException {
@@ -178,15 +208,23 @@ public class MainActivity extends AppCompatActivity {
         File f = new File("/data/data/com.example.tundra/files","data.csv");
         Log.d("MyActivity",f.getPath());
 
+        //this is here only for emulators
+        //f = new File(getFilesDir(),"data.csv");
+
         if(f.exists()){
             Log.d("MyActvity","file existed");
         }
+        else{
+            Log.d("MyActivity","file not existing");
+        }
 
         if(!f.exists()){
-            boolean newFile = f.createNewFile();
+            Log.d("MyActivity","creating new file");
 
-            if(newFile){
+
+            if(f.createNewFile()){
                 setDataFile();
+                Log.d("MyActivity","set the new file");
             }
 
             Log.d("MyActvity","finished making new file");
@@ -282,8 +320,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     //this function is going to seem stupid but easier to do two functions than try to figure it out in 1
-    private void rankUpdate(userData u_data)
-    {
+    private void rankUpdate(userData u_data) throws IOException {
         List<rank<Integer,Long>> rank_info = readRank();
 
         Log.d("MyActivity","original: ");
@@ -333,12 +370,31 @@ public class MainActivity extends AppCompatActivity {
     //this is a helper for rankUpdate But I made it a helper so that we can call this whenever without
     //having to update the entire time
     //however it SHOULD only be called after an update has happened
-    private List<rank<Integer,Long>> readRank(){
+    private List<rank<Integer,Long>> readRank() throws IOException {
         List<rank<Integer,Long>> rank_info = new ArrayList<rank<Integer,Long>>(); //an array so we can resort user data if needed
 
         InputStream is = null;
         File f = new File("/data/data/com.example.tundra/files","ranking.csv");
 
+        //f = new File(getFilesDir(),"rank.csv");
+        if(f.exists()){
+            Log.d("MyActvity","file existed");
+        }
+        else{
+            Log.d("MyActivity","file not existing");
+        }
+
+        if(!f.exists()){
+            Log.d("MyActivity","creating new file");
+
+
+            if(f.createNewFile()){
+                setRankFile();
+                Log.d("MyActivity","set the new file");
+            }
+
+            Log.d("MyActvity","finished making new file");
+        }
         //open the data file as a inputstream
         try{
             is = new FileInputStream(f);

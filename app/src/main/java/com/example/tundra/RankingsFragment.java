@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 ///**
@@ -22,6 +23,7 @@ public class RankingsFragment extends Fragment {
     private RecyclerView recyclerView;
     userData u_data;
     List<rank<Integer,Long>> rankings;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +61,8 @@ public class RankingsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             u_data = (userData) getArguments().get("user_info");
+            ArrayList<rank<Integer,Long>> al = (ArrayList<rank<Integer,Long>>) getArguments().get("rankings");
+            rankings = al;
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
         }

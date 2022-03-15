@@ -106,27 +106,27 @@ public class StudyFragment extends Fragment {
             Log.d("MyActivty","null");
         }
 
-        rank.setText(Integer.toString(u_data.getRank()+1));
+        rank.setText("Current Rank: "+Integer.toString(u_data.getRank()+1));
 
         Log.d("MyActivty","rank");
 
 
-        total.setText(msToString(u_data.getTotalTime()));
+        total.setText("Total Time studied: \n"+msToString(u_data.getTotalTime()));
 
         Log.d("MyActivty","total");
 
-        avg.setText(msToString(u_data.getAvg()));
+        avg.setText("Average Session: \n"+msToString(u_data.getAvg()));
         Log.d("MyActivty","avg");
 
-        latest.setText(msToString(u_data.getLatest()));
+        latest.setText("Latest Session: \n"+msToString(u_data.getLatest()));
 
         Log.d("MyActivty","latest");
 
-        succ.setText(Float.toString(u_data.getSuccRate()));
+        succ.setText("Success Rate: "+Float.toString(u_data.getSuccRate() * 100));
 
         Log.d("MyActivty","succ");
 
-        num.setText(Integer.toString(u_data.getNumSessions()));
+        num.setText("Completed Sessions: "+Integer.toString(u_data.getNumSessions()));
 
         Log.d("MyActivty","num");
 

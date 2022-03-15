@@ -35,8 +35,8 @@
 
     <RelativeLayout
         android:id="@+id/start_container"
-        android:layout_width="481dp"
-        android:layout_height="692dp"
+        android:layout_width="389dp"
+        android:layout_height="672dp"
         android:layout_marginTop="12dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,8 +51,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:background="@drawable/border"
             android:backgroundTint="@color/white"
             android:onClick="sendMessages"
@@ -76,8 +74,8 @@
 
     <RelativeLayout
         android:id="@+id/welcome"
-        android:layout_width="478dp"
-        android:layout_height="79dp"
+        android:layout_width="390dp"
+        android:layout_height="70dp"
         android:background="#FDFAFA"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"

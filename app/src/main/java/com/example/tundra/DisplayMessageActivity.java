@@ -272,7 +272,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         timer_sb.setProgress(progress);
         timer_tv.setText("" + minutes + ":" + secondsFinal);
 
-        if(state == 3){
+        if(state == 4){
             //update the user data after a failure
             reset();
             alarm();
@@ -342,7 +342,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
     private void alarm()
     {
 
-        if(state == 3) {
+        if(state == 4) {
             face.setText(create_text());
         }else{
             face.setText("GOOD JOB! Go Again?");
@@ -415,15 +415,15 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
                 Log.d("MyActivity","z" + z_value + "x"+x_value + "y" + y_value);
 
-                if(state == 1  && z_value <= -9.8f){
+                if(state == 1  && z_value <= -10f){
                     Log.d("MyActiviy","facedown");
                     state = 2;
                     start_timer(view);
 
                 }
 
-                if(state ==2) {
-                    if ((x_value > .2f && x_value < -2f) || (y_value > .2f && y_value < -.2f) || z_value > -9.8) {
+                else if(state ==2) {
+                    if ((x_value > 2f && x_value < -2f) || (y_value > 2f && y_value < -2f) || z_value > -9.8) {
 
                         state = 3;
                         //testing
@@ -432,11 +432,24 @@ public class DisplayMessageActivity extends AppCompatActivity {
                         Log.d("MyActivity", "moved");
                     }
                 }
+                else if(state ==3) {
+                    if ((x_value > .3f && x_value < -.3f) || (y_value > .3f && y_value < -.3f) || z_value > -9.8) {
 
-                if (z_value >= 0) {
+                        state = 4;
+                        //testing
+                        //rotating = false;
+                        moved = true;
+                        Log.d("MyActivity", "moved");
+                    }
+                }
+
+                else if (z_value >= 0) {
                     //face.setText("faceup");
                     Log.d("MyActivity","faceup");
-                    state = 0;
+//                    if(state> 2){
+//                        state =4;
+//                    }
+                    //state = 0;
                 } else {
 
                     if (!rotating) {
