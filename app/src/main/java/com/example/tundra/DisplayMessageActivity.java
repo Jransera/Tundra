@@ -29,6 +29,7 @@ import android.widget.ToggleButton;
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -406,17 +407,17 @@ public class DisplayMessageActivity extends AppCompatActivity {
     private SensorEventListener gyroListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
-            Log.d("MyActivity","in listener");
+            //Log.d("MyActivity","in listener");
 
             if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                 float z_value = sensorEvent.values[2];
                 float x_value = sensorEvent.values[0];
                 float y_value = sensorEvent.values[1];
 
-                Log.d("MyActivity","z" + z_value + "x"+x_value + "y" + y_value);
+                Log.d("Sensor","Z: " + z_value + " ,X: "+x_value + " ,Y: " + y_value);
 
-                if(state == 1  && z_value <= -10f){
-                    Log.d("MyActiviy","facedown");
+                if(state == 1  && z_value <= -9.8f){
+                    Log.d("Sensor","facedown");
                     state = 2;
                     start_timer(view);
 
@@ -429,7 +430,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                         //testing
                         //rotating = false;
                         moved = true;
-                        Log.d("MyActivity", "moved");
+                        Log.d("Sensor", "set down");
                     }
                 }
                 else if(state ==3) {
@@ -439,13 +440,13 @@ public class DisplayMessageActivity extends AppCompatActivity {
                         //testing
                         //rotating = false;
                         moved = true;
-                        Log.d("MyActivity", "moved");
+                        Log.d("Sensor ", "Alarm");
                     }
                 }
 
                 else if (z_value >= 0) {
                     //face.setText("faceup");
-                    Log.d("MyActivity","faceup");
+                    //Log.d("Sensor","faceup");
 //                    if(state> 2){
 //                        state =4;
 //                    }
@@ -459,7 +460,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
                         state = 1;
 
                         face.setText("upsidedown");
-                        Log.d("MyActivity", "rotating");
+                        Log.d("Sensor", "rotating");
 
                     }
                 }
@@ -473,6 +474,28 @@ public class DisplayMessageActivity extends AppCompatActivity {
 
         }
     };
+
+//    public void writeStatus(String s) throws IOException {
+//        String filename = "/data/data/com.example.tundra/files/sensorData.txt";
+//        //String path = "src/main/res/raw/";
+//       //String headers = "Rank,Total_Time,Avg_Time,Latest_Time,Succ_Rate,N_Sessions,N_Tries";
+//
+//        File f = new File("/data/data/com.example.tundra/files","sensorData.txt");
+//
+//        if(!f.exists()){
+//            f.createNewFile();
+//        }
+//
+//
+//        try{
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput(filename,this.MODE_APPEND));
+//            outputStreamWriter.write(s+'\n');
+//            outputStreamWriter.close();
+//        }
+//        catch(IOException e){
+//            Log.e("Myactivity","File write failed:"+e.toString());
+//        }
+//    }
 
 
 

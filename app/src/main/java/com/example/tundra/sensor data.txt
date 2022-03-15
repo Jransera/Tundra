@@ -1,0 +1,24 @@
+2022-03-15 17:33:21.889 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:21.967 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:22.025 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:24.889 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:24.956 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:26.089 5128-5128/com.example.tundra D/Sensor: Z: 6.80227 ,X: 7.068608 ,Y: -0.0
+2022-03-15 17:33:26.156 5128-5128/com.example.tundra D/Sensor: Z: 9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:30.090 5128-5128/com.example.tundra D/Sensor: Z: 9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:30.156 5128-5128/com.example.tundra D/Sensor: Z: 2.8052456 ,X: -9.40036 ,Y: 0.0
+2022-03-15 17:33:30.889 5128-5128/com.example.tundra D/Sensor: Z: 2.8052456 ,X: -9.40036 ,Y: 0.0
+2022-03-15 17:33:30.957 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:30.958 5128-5128/com.example.tundra D/Sensor: rotating
+2022-03-15 17:33:31.023 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:31.023 5128-5128/com.example.tundra D/Sensor: facedown
+2022-03-15 17:33:31.089 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:38.956 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:39.023 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:40.222 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:40.289 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:46.891 5128-5128/com.example.tundra D/Sensor: Z: -9.809989 ,X: 0.0 ,Y: -0.0
+2022-03-15 17:33:46.957 5128-5128/com.example.tundra D/Sensor: Z: -9.756263 ,X: -1.0254217 ,Y: 0.0
+2022-03-15 17:33:46.957 5128-5128/com.example.tundra D/Sensor: set down
+2022-03-15 17:33:47.024 5128-5128/com.example.tundra D/Sensor: Z: -9.756263 ,X: -1.0254217 ,Y: 0.0
+2022-03-15 17:33:47.024 5128-5128/com.example.tundra D/Sensor: Alarm
